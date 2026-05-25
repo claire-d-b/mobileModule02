@@ -62,6 +62,12 @@ export default function CAppbar() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
+    if (detectedAddress && location === "") {
+      setLocation(detectedAddress);
+    }
+  }, [detectedAddress]);
+
+  useEffect(() => {
     const fetchPlaces = async () => {
       const list = await getPlacesList(address);
       // console.log("list", list);
