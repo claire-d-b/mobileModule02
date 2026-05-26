@@ -10,7 +10,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <PaperProvider>
-        <CAppbar />
+        <SafeAreaView>
+          <CAppbar />
+        </SafeAreaView>
       </PaperProvider>
     </SafeAreaProvider>
   );

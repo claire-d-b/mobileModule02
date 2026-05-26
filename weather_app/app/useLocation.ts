@@ -142,12 +142,15 @@ export const useLocation = (externalCoords?: {
   // Fetch ensemble weather when coords change
   useEffect(() => {
     const fetchForecasts = async () => {
-      if (coords.latitude === undefined || coords.longitude === undefined)
+      if (
+        activeCoords.latitude === undefined ||
+        activeCoords.longitude === undefined
+      )
         return;
       // params to send to openmeteo - defines which values will be returned
       const response = await getForecasts({
-        latitude: coords.latitude,
-        longitude: coords.longitude,
+        latitude: activeCoords.latitude,
+        longitude: activeCoords.longitude,
         daily: [
           "weather_code",
           "temperature_2m_max",
@@ -179,6 +182,7 @@ export const useLocation = (externalCoords?: {
       setLoading(false);
 
       subscriber = await trackLocation(async (newCoords) => {
+        if (externalCoords) return;
         setCoords(newCoords);
         const newAddress = await getLocationName(newCoords);
         setAddress(newAddress ?? "");
