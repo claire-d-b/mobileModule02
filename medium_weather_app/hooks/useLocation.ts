@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Platform, Alert } from "react-native";
 import { fetchWeatherApi } from "openmeteo";
 import { getForecasts } from "./ensemble";
-import { WeatherData } from "./CBottomNav";
+import { WeatherData } from "../app/CBottomNav";
 
 interface Coords {
   latitude: number | undefined;

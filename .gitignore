@@ -1,1 +1,6 @@
-weather_app/node_modules
+medium_weather_app/node_modules
+medium_weather_app/package-lock.json
+medium_weather_app/tsconfig.json
+medium_weather_app/app.json
+medium_weather_app/.expo
+medium_weather_app/android
