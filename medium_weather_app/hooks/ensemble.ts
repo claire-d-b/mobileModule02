@@ -15,23 +15,17 @@ export const getForecasts = async ({ ...params }: EnsembleParams) => {
   // Process first location. Add a for-loop for multiple locations or weather models
   const response = responses[0];
 
-  // Attributes for timezone and location
-  const latitude = response.latitude();
-  const longitude = response.longitude();
-  const elevation = response.elevation();
+  // utcOffsetSeconds() is a method returned by the open-meteo API which gives the time difference in secondes between UTC and the local time zone from the city.
   const utcOffsetSeconds = response.utcOffsetSeconds();
-
-  // console.log(
-  //     `\nCoordinates: ${latitude}°N ${longitude}°E`,
-  //     `\nElevation: ${elevation}m asl`,
-  //     `\nTimezone difference to GMT+0: ${utcOffsetSeconds}s`,
-  // );
 
   const current = response.current()!;
   const hourly = response.hourly()!;
   const daily = response.daily()!;
 
   // Note: The order of weather variables in the URL query and the indices below need to match!
+  // current.time() returns a BigInt (ex: 1718617200n) — number of seconds from the 1st Jan 1970 in UTC. Number() converts it into classical number.
+  // JavaScript deals with milliseconds, not seconds — so we multiply by 1000.
+  // Without utcOffsetSeconds, the date would be correct in absolute value but when you call time.getDate() or time.getHours(), JavaScript would rely on the mobile's time zone, which can lead to a different day for a city far from the user.
   const weatherData = {
     current: {
       time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
@@ -76,14 +70,5 @@ export const getForecasts = async ({ ...params }: EnsembleParams) => {
   };
 
   return weatherData;
-
   // The 'weatherData' object now contains a simple structure, with arrays of datetimes and weather information
-  // console.log(
-  //     `\nCurrent time: ${weatherData.current.time}\n`,
-  //     `\nCurrent temperature_2m: ${weatherData.current.temperature_2m}`,
-  //     `\nCurrent weather_code: ${weatherData.current.weather_code}`,
-  //     `\nCurrent wind_speed_10m: ${weatherData.current.wind_speed_10m}`,
-  // );
-  // console.log("\nHourly data:\n", weatherData.hourly)
-  // console.log("\nDaily data:\n", weatherData.daily)
 };

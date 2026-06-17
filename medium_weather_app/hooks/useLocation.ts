@@ -2,7 +2,6 @@ import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
 import { useState, useEffect } from "react";
 import { Platform, Alert } from "react-native";
-import { fetchWeatherApi } from "openmeteo";
 import { getForecasts } from "./ensemble";
 import { WeatherData } from "../app/CBottomNav";
 
@@ -53,9 +52,9 @@ const getLocation = async (): Promise<Coords | null> => {
   }
 
   try {
-    const { coords } = (await Location.getCurrentPositionAsync({
+    const { coords } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.High,
-    })) || { latitude: 0, longitude: 0 };
+    });
     return { latitude: coords.latitude, longitude: coords.longitude };
   } catch (e) {
     console.warn("Could not get position:", e);
@@ -72,8 +71,8 @@ export const trackLocation = async (
   return await Location.watchPositionAsync(
     {
       accuracy: Location.Accuracy.High,
-      timeInterval: 5000,
-      distanceInterval: 10,
+      timeInterval: 5000, // 5s between each update
+      distanceInterval: 10, // updates when the location has changed by at least this distance in meters
     },
     ({ coords }) =>
       onChange({ latitude: coords.latitude, longitude: coords.longitude }),
@@ -85,6 +84,8 @@ export const getLocationName = async (
 ): Promise<string | null> => {
   if (coords.latitude === undefined || coords.longitude === undefined)
     return null;
+  // Reverse geocode a location to postal address.
+  // On Android, you must request location permissions with requestForegroundPermissionsAsync before geocoding can be used.
   const [place] = await Location.reverseGeocodeAsync({
     latitude: coords.latitude,
     longitude: coords.longitude,
@@ -97,16 +98,9 @@ export const getLocationName = async (
     place.region,
     place.country,
   ]
-    .filter(Boolean)
+    .filter(Boolean) // Delete all empty/null values from the array. Kepps only truthy values.
     .join(", ");
 };
-
-interface WeatherParams {
-  latitude: number;
-  longitude: number;
-  hourly: string[];
-  current: string;
-}
 
 export const getPlacesList = async (location: string) => {
   if (!location) return [];
@@ -120,11 +114,6 @@ export const getPlacesList = async (location: string) => {
     return [];
   }
 };
-
-interface Props {
-  weatherData: object;
-  setWeatherData: Function;
-}
 
 export const useLocation = (externalCoords?: {
   latitude: number;
@@ -161,7 +150,7 @@ export const useLocation = (externalCoords?: {
         current: ["temperature_2m", "weather_code", "wind_speed_10m"],
       });
       setWeatherData(response);
-      console.log("resp", response);
+      // console.log("resp", response);
     };
     fetchForecasts();
   }, [activeCoords.latitude, activeCoords.longitude]);
@@ -172,8 +161,8 @@ export const useLocation = (externalCoords?: {
     const init = async () => {
       const initialCoords = await getLocation();
       const currentCoords = {
-        latitude: initialCoords?.latitude ?? 0,
-        longitude: initialCoords?.longitude ?? 0,
+        latitude: initialCoords?.latitude,
+        longitude: initialCoords?.longitude,
       };
       setCoords(currentCoords);
 
@@ -190,6 +179,7 @@ export const useLocation = (externalCoords?: {
     };
 
     init();
+    // cleanup function of the useEffect — React calls it automatically when component is unmounted.
     return () => subscriber?.remove();
   }, []);
   console.log(weatherData);
