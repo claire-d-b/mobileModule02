@@ -2,7 +2,7 @@ import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
 import { useState, useEffect } from "react";
 import { Platform, Alert } from "react-native";
-import { getForecasts } from "./ensemble";
+import { getForecasts } from "../functions/ensemble";
 import { WeatherData } from "../app/CBottomNav";
 
 interface Coords {
@@ -150,7 +150,6 @@ export const useLocation = (externalCoords?: {
         current: ["temperature_2m", "weather_code", "wind_speed_10m"],
       });
       setWeatherData(response);
-      // console.log("resp", response);
     };
     fetchForecasts();
   }, [activeCoords.latitude, activeCoords.longitude]);
@@ -182,7 +181,7 @@ export const useLocation = (externalCoords?: {
     // cleanup function of the useEffect — React calls it automatically when component is unmounted.
     return () => subscriber?.remove();
   }, []);
-  console.log(weatherData);
+  // console.log(weatherData);
   return { address, coords: activeCoords, weatherData, loading };
 };
 

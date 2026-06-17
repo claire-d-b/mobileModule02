@@ -3,7 +3,7 @@
 import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
 import { View } from "react-native";
-import getWeatherCode from "../hooks/weatherCodes";
+import getWeatherCode from "../functions/weatherCodes";
 
 export interface WeatherData {
   current: {

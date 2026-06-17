@@ -157,7 +157,6 @@ export default function CAppbar() {
                     }
                     onPress={(_) => {
                       setLocation(`${p.name}, ${p.admin1}, ${p.country}`);
-                      console.log("loc", p.name);
                       setSelectedCoords({
                         latitude: p.latitude,
                         longitude: p.longitude,
