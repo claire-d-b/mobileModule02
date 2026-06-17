@@ -91,9 +91,7 @@ const TodayRoute = ({ location, todayHourly }: TodayRouteProps) => (
     }}
   >
     <Text>Today</Text>
-    <View
-      style={{ padding: 20, width: "100%", height: "100%", overflow: "scroll" }}
-    >
+    <View style={{ padding: 20, width: "100%", overflow: "scroll" }}>
       <Text>{location}</Text>
       {!!todayHourly?.length &&
         todayHourly.map((h, i) => {
@@ -103,7 +101,7 @@ const TodayRoute = ({ location, todayHourly }: TodayRouteProps) => (
               style={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "space-around",
+                justifyContent: "space-between",
                 alignItems: "center",
               }}
             >
@@ -137,6 +135,7 @@ const WeeklyRoute = ({ location, weekly }: WeeklyRouteProps) => (
   >
     <Text>Weekly</Text>
     <View style={{ padding: 20, width: "100%" }}>
+      <Text>{location}</Text>
       {!!weekly?.length &&
         weekly.map((w, i) => {
           return (
@@ -145,7 +144,7 @@ const WeeklyRoute = ({ location, weekly }: WeeklyRouteProps) => (
               style={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "space-around",
+                justifyContent: "space-between",
                 alignItems: "center",
               }}
             >

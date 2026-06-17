@@ -83,10 +83,11 @@ export default function CAppbar() {
           <Icon source="magnify" color="white" size={20} />
           <CTextInput
             onBlur={(e: any) => {
-              setLocation(address);
-              setVisible(false);
-              setLocation("");
-              setErrorMessage("Location not found.");
+              // setLocation(address);
+              if (!selectedCoords) {
+                setLocation("");
+                setErrorMessage("Location not found.");
+              }
             }}
             onChangeText={(text: string) => {
               setAddress(text);
@@ -168,17 +169,6 @@ export default function CAppbar() {
                 </View>
               );
             })}
-          {/* {errorMessage !== "" && (
-            <View
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <Text>{errorMessage}</Text>
-            </View>
-          )} */}
           {!visible && (
             <CBottomNav
               message={errorMessage}
@@ -186,7 +176,7 @@ export default function CAppbar() {
               weatherData={weatherData}
               style={{
                 height: "100%",
-                paddingBottom: 40,
+                paddingBottom: 60,
               }}
             />
           )}
