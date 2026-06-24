@@ -1,7 +1,7 @@
 // @ts-nocheck
 // Cela supprime toutes les erreurs TypeScript sans rien casser à l'exécution. C'est un contournement acceptable tant que react-native-paper n'a pas de fix officiel pour RN 0.81.
 import React, { useState, useEffect } from "react";
-import { View } from "react-native";
+import { View, useWindowDimensions, ScrollView } from "react-native";
 import { Appbar, Text, IconButton, Icon, Menu } from "react-native-paper";
 import CTextInput from "./CTextInput";
 import CBottomNav from "./CBottomNav";
@@ -21,6 +21,9 @@ interface Coordinates {
 }
 
 export default function CAppbar() {
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+
   const [selectedCoords, setSelectedCoords] = useState<Coordinates | undefined>(
     undefined,
   );
@@ -54,8 +57,7 @@ export default function CAppbar() {
   return (
     <View
       style={{
-        width: "100%",
-        height: "100%",
+        flex: 1,
         display: "flex",
         flexDirection: "column",
       }}
@@ -129,22 +131,21 @@ export default function CAppbar() {
       <View
         style={{
           width: "100%",
-          height: "100%",
+          height: isLandscape ? "70%" : "100%",
         }}
       >
         <View
           style={{
-            height: "100%",
-            width: "100%",
+            flex: 1,
             display: "flex",
+
             flexDirection: "column",
           }}
         >
-          {visible &&
-            !!placesList.length &&
-            placesList.map((p, i) => {
-              return (
-                <View key={`place_${i}`} style={{ display: "flex" }}>
+          {visible && !!placesList.length && (
+            <ScrollView style={{ flex: 1 }}>
+              {placesList.map((p, i) => (
+                <View key={`place_${i}`}>
                   <Menu.Item
                     title={
                       <>
@@ -155,7 +156,7 @@ export default function CAppbar() {
                         <Text>{`${p.country}`}</Text>
                       </>
                     }
-                    onPress={(_) => {
+                    onPress={() => {
                       setLocation(`${p.name}, ${p.admin1}, ${p.country}`);
                       setSelectedCoords({
                         latitude: p.latitude,
@@ -164,18 +165,20 @@ export default function CAppbar() {
                       setErrorMessage("");
                       setVisible(false);
                     }}
-                  ></Menu.Item>
+                  />
                 </View>
-              );
-            })}
+              ))}
+            </ScrollView>
+          )}
           {!visible && (
             <CBottomNav
               message={errorMessage}
               location={location}
               weatherData={weatherData}
               style={{
-                height: "100%",
-                paddingBottom: 60,
+                // height: "100%",
+                flex: 1,
+                paddingBottom: isLandscape ? 100 : 60,
               }}
             />
           )}

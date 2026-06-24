@@ -1,0 +1,3 @@
+<SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "
+right"]}>
+return <Stack screenOptions={{ headerShown: false }} />;
