@@ -78,6 +78,7 @@ export default function CAppbar() {
         <View
           style={{
             display: "flex",
+            height: "100%",
             flexDirection: "row",
             justifyContent: "flex-start",
             alignItems: "center",
@@ -131,59 +132,51 @@ export default function CAppbar() {
       </Appbar.Header>
       <View
         style={{
-          width: "100%",
-          height: isLandscape ? "70%" : "100%",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            display: "flex",
-
-            flexDirection: "column",
-          }}
-        >
-          {visible && !!placesList.length && (
-            <ScrollView style={{ flex: 1 }}>
-              {placesList.map((p, i) => (
-                <View key={`place_${i}`}>
-                  <Menu.Item
-                    title={
-                      <>
-                        <Text
-                          style={{ fontWeight: "bold" }}
-                        >{`${p.name}, `}</Text>
-                        <Text>{`${p.admin1}, `}</Text>
-                        <Text>{`${p.country}`}</Text>
-                      </>
-                    }
-                    onPress={() => {
-                      setLocation(`${p.name}, ${p.admin1}, ${p.country}`);
-                      setSelectedCoords({
-                        latitude: p.latitude,
-                        longitude: p.longitude,
-                      });
-                      setErrorMessage("");
-                      setVisible(false);
-                    }}
-                  />
-                </View>
-              ))}
-            </ScrollView>
-          )}
-          {!visible && (
-            <CBottomNav
-              message={errorMessage}
-              location={location}
-              weatherData={weatherData}
-              style={{
-                // height: "100%",
-                flex: 1,
-                paddingBottom: isLandscape ? 100 : 60,
-              }}
-            />
-          )}
-        </View>
+        {visible && !!placesList.length && (
+          <ScrollView style={{ flex: 1 }}>
+            {placesList.map((p, i) => (
+              <View key={`place_${i}`}>
+                <Menu.Item
+                  title={
+                    <>
+                      <Text
+                        style={{ fontWeight: "bold" }}
+                      >{`${p.name}, `}</Text>
+                      <Text>{`${p.admin1}, `}</Text>
+                      <Text>{`${p.country}`}</Text>
+                    </>
+                  }
+                  onPress={() => {
+                    setLocation(`${p.name}, ${p.admin1}, ${p.country}`);
+                    setSelectedCoords({
+                      latitude: p.latitude,
+                      longitude: p.longitude,
+                    });
+                    setErrorMessage("");
+                    setVisible(false);
+                  }}
+                />
+              </View>
+            ))}
+          </ScrollView>
+        )}
+        {!visible && (
+          <CBottomNav
+            message={errorMessage}
+            location={location}
+            weatherData={weatherData}
+            // style={{
+            //   // height: "100%",
+            //   flex: 1,
+            //   paddingBottom: isLandscape ? 100 : 60,
+            // }}
+          />
+        )}
       </View>
     </View>
   );

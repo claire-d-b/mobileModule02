@@ -2,7 +2,7 @@
 // Cela supprime toutes les erreurs TypeScript sans rien casser à l'exécution. C'est un contournement acceptable tant que react-native-paper n'a pas de fix officiel pour RN 0.81.
 import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import getWeatherCode from "../functions/weatherCodes";
 import PagerView from "react-native-pager-view";
 
@@ -70,7 +70,7 @@ const TodayRoute = ({ location, todayHourly }: TodayRouteProps) => (
     }}
   >
     <Text>Today</Text>
-    <View style={{ padding: 20, width: "100%", overflow: "scroll" }}>
+    <ScrollView style={{ padding: 20, width: "100%" }}>
       <Text>{location}</Text>
       {!!todayHourly?.length &&
         todayHourly.map((h, i) => {
@@ -96,7 +96,7 @@ const TodayRoute = ({ location, todayHourly }: TodayRouteProps) => (
             </View>
           );
         })}
-    </View>
+    </ScrollView>
   </View>
 );
 
@@ -113,7 +113,7 @@ const WeeklyRoute = ({ location, weekly }: WeeklyRouteProps) => (
     }}
   >
     <Text>Weekly</Text>
-    <View style={{ padding: 20, width: "100%" }}>
+    <ScrollView style={{ padding: 20, width: "100%" }}>
       <Text>{location}</Text>
       {!!weekly?.length &&
         weekly.map((w, i) => {
@@ -140,7 +140,7 @@ const WeeklyRoute = ({ location, weekly }: WeeklyRouteProps) => (
             </View>
           );
         })}
-    </View>
+    </ScrollView>
   </View>
 );
 
