@@ -2,13 +2,39 @@ import * as Location from "expo-location";
 import * as IntentLauncher from "expo-intent-launcher";
 import { useState, useEffect } from "react";
 import { Platform, Alert } from "react-native";
-import { getForecasts } from "../functions/ensemble";
-import { WeatherData } from "../app/CBottomNav";
+import { getForecasts } from "../functions/forecasts";
 
 interface Coords {
   latitude: number | undefined;
   longitude: number | undefined;
 }
+
+export interface WeatherData {
+  current: {
+    time: Date | null | undefined;
+    temperature_2m: number | null | undefined;
+    weather_code: number | null | undefined;
+    wind_speed_10m: number | null | undefined;
+  };
+  hourly: {
+    time: Date[] | null | undefined;
+    temperature_2m: Float32Array | null | undefined;
+    weather_code: Float32Array | null | undefined;
+    wind_speed_10m: Float32Array | null | undefined;
+  };
+  daily: {
+    time: Date[];
+    temperature_2m_max: Float32Array | null | undefined;
+    temperature_2m_min: Float32Array | null | undefined;
+    weather_code: Float32Array | null | undefined;
+    wind_speed_10m_max: Float32Array | null | undefined;
+  };
+}
+
+// expo-location est la librairie qui donne accès au GPS.
+// Elle fait le pont entre JavaScript et les APIs natives du téléphone :
+// Sans elle, tu ne peux pas accéder au GPS depuis React Native.
+// C'est elle qui gère aussi les permissions (requestForegroundPermissionsAsync).
 
 const requestPermission = async (): Promise<boolean> => {
   const { status } = await Location.requestForegroundPermissionsAsync();
@@ -40,7 +66,7 @@ const promptEnableGPS = (): void => {
     ],
   );
 };
-
+// Get current location
 const getLocation = async (): Promise<Coords | null> => {
   const granted = await requestPermission();
   if (!granted) return null;
@@ -51,17 +77,17 @@ const getLocation = async (): Promise<Coords | null> => {
     return null;
   }
 
-  try {
-    const { coords } = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.High,
-    });
-    return { latitude: coords.latitude, longitude: coords.longitude };
-  } catch (e) {
-    console.warn("Could not get position:", e);
-    return null;
-  }
+  const { coords } = await Location.getCurrentPositionAsync({
+    accuracy: Location.Accuracy.High,
+  });
+
+  return {
+    latitude: coords.latitude,
+    longitude: coords.longitude,
+  };
 };
 
+// Track location changes
 export const trackLocation = async (
   onChange: (coords: Coords) => void,
 ): Promise<Location.LocationSubscription | null> => {
@@ -98,7 +124,7 @@ export const getLocationName = async (
     place.region,
     place.country,
   ]
-    .filter(Boolean) // Delete all empty/null values from the array. Kepps only truthy values.
+    .filter(Boolean) // .filter(Boolean) supprime les valeurs falsy du tableau avant de les joindre. Valeurs falsy = undefined, null, "", 0, false, NaN.
     .join(", ");
 };
 
@@ -184,5 +210,3 @@ export const useLocation = (externalCoords?: {
   // console.log(weatherData);
   return { address, coords: activeCoords, weatherData, loading };
 };
-
-export default useLocation;

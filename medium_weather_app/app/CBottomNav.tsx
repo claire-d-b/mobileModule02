@@ -4,28 +4,7 @@ import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
 import { View } from "react-native";
 import getWeatherCode from "../functions/weatherCodes";
-
-export interface WeatherData {
-  current: {
-    time: Date;
-    temperature_2m: number;
-    weather_code: number;
-    wind_speed_10m: number;
-  };
-  hourly: {
-    time: Date[];
-    temperature_2m: Float32Array | null;
-    weather_code: Float32Array | null;
-    wind_speed_10m: Float32Array | null;
-  };
-  daily: {
-    time: Date[];
-    temperature_2m_max: Float32Array | null;
-    temperature_2m_min: Float32Array | null;
-    weather_code: Float32Array | null;
-    wind_speed_10m_max: Float32Array | null;
-  };
-}
+import PagerView from "react-native-pager-view";
 
 interface RouteProps {
   location: string;
@@ -173,6 +152,8 @@ interface Props {
 }
 
 const CBottomNav = ({ message, location, weatherData, style }: Props) => {
+  const pagerRef = React.useRef<PagerView>(null);
+
   const today = new Date();
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
@@ -281,16 +262,32 @@ const CBottomNav = ({ message, location, weatherData, style }: Props) => {
   });
 
   return (
-    <BottomNavigation
-      navigationState={{ index, routes }}
-      onIndexChange={setIndex}
-      renderScene={renderScene}
-      activeColor="white"
-      inactiveColor="white"
-      activeIndicatorStyle={{ backgroundColor: "#534DB3" }}
-      barStyle={{ backgroundColor: "#534DB3" }}
-      style={style}
-    />
+    <View style={{ flex: 1 }}>
+      <PagerView
+        ref={pagerRef}
+        style={{ flex: 1 }}
+        initialPage={0}
+        onPageSelected={(e) => setIndex(e.nativeEvent.position)}
+      >
+        {routes.map((route) => (
+          <View key={route.key} style={{ flex: 1 }}>
+            {renderScene({ route })}
+          </View>
+        ))}
+      </PagerView>
+      <BottomNavigation.Bar
+        navigationState={{ index, routes }}
+        onTabPress={({ route }) => {
+          const newIndex = routes.findIndex((r) => r.key === route.key);
+          pagerRef.current?.setPageWithoutAnimation(newIndex);
+          setIndex(newIndex);
+        }}
+        activeColor="white"
+        inactiveColor="white"
+        activeIndicatorStyle={{ backgroundColor: "#534DB3" }}
+        style={{ backgroundColor: "#534DB3" }}
+      />
+    </View>
   );
 };
 

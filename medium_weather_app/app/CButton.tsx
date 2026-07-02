@@ -11,7 +11,7 @@ interface Props {
   labelStyle: {};
 }
 
-export default function CButton({
+const _ = ({
   onClick,
   msg,
   variant,
@@ -19,7 +19,7 @@ export default function CButton({
   style,
   buttonColor,
   labelStyle,
-}: Props) {
+}: Props) => {
   return (
     <Button
       onPress={onClick}
@@ -32,4 +32,6 @@ export default function CButton({
       {msg}
     </Button>
   );
-}
+};
+
+export default _;

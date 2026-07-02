@@ -57,7 +57,8 @@ export default function CAppbar() {
   return (
     <View
       style={{
-        flex: 1,
+        width: "100%",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
       }}

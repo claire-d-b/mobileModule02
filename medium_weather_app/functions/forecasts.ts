@@ -28,14 +28,22 @@ export const getForecasts = async ({ ...params }: EnsembleParams) => {
   // Without utcOffsetSeconds, the date would be correct in absolute value but when you call time.getDate() or time.getHours(), JavaScript would rely on the mobile's time zone, which can lead to a different day for a city far from the user.
   const weatherData = {
     current: {
-      time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
-      temperature_2m: current.variables(0)!.value(),
-      weather_code: current.variables(1)!.value(),
-      wind_speed_10m: current.variables(2)!.value(),
+      time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000), // pour avoir l'h locale, pas le fuseau horaire de l'appareil. Conversion on millisecondes.
+      temperature_2m: current.variables(0)?.value(),
+      weather_code: current.variables(1)?.value(),
+      wind_speed_10m: current.variables(2)?.value(),
     },
     hourly: {
+      // Array.from() accepte en premier argument soit :
+
+      // un vrai tableau/itérable ([1, 2, 3])
+      // soit un objet "array-like", c'est-à-dire n'importe quel objet qui possède une propriété length
+
+      // Ici, on ne donne pas de vraies données, juste un objet minimaliste { length: N } qui dit à Array.from : "je veux que tu me génères un tableau de N éléments".
+      // Array.from va alors interpréter ça comme "il faut créer N cases", et va appeler la fonction du deuxième argument une fois pour chaque case, avec l'index i allant de 0 à N-1.
       time: Array.from(
         {
+          // Donc : (fin - début) / intervalle = le nombre total d'heures entre le début et la fin. C'est le nombre d'éléments qu'on veut dans le tableau.
           length:
             (Number(hourly.timeEnd()) - Number(hourly.time())) /
             hourly.interval(),
@@ -46,9 +54,9 @@ export const getForecasts = async ({ ...params }: EnsembleParams) => {
               1000,
           ),
       ),
-      temperature_2m: hourly.variables(0)!.valuesArray(),
-      weather_code: hourly.variables(1)!.valuesArray(),
-      wind_speed_10m: hourly.variables(2)!.valuesArray(),
+      temperature_2m: hourly.variables(0)?.valuesArray(),
+      weather_code: hourly.variables(1)?.valuesArray(),
+      wind_speed_10m: hourly.variables(2)?.valuesArray(),
     },
     daily: {
       time: Array.from(
@@ -62,10 +70,10 @@ export const getForecasts = async ({ ...params }: EnsembleParams) => {
               1000,
           ),
       ),
-      weather_code: daily.variables(0)!.valuesArray(),
-      temperature_2m_max: daily.variables(1)!.valuesArray(),
-      temperature_2m_min: daily.variables(2)!.valuesArray(),
-      wind_speed_10m_max: daily.variables(3)!.valuesArray(),
+      weather_code: daily.variables(0)?.valuesArray(),
+      temperature_2m_max: daily.variables(1)?.valuesArray(),
+      temperature_2m_min: daily.variables(2)?.valuesArray(),
+      wind_speed_10m_max: daily.variables(3)?.valuesArray(),
     },
   };
 

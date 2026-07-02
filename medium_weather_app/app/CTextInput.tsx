@@ -18,7 +18,7 @@ interface Props {
   style: {};
 }
 
-export default function CTextInput({
+const _ = ({
   onBlur,
   onChangeText,
   label,
@@ -33,7 +33,7 @@ export default function CTextInput({
   selectionColor,
   contentStyle,
   style,
-}: Props) {
+}: Props) => {
   return (
     <TextInput
       onBlur={onBlur}
@@ -51,4 +51,6 @@ export default function CTextInput({
       style={style}
     />
   );
-}
+};
+
+export default _;
