@@ -3,3 +3,4 @@ Ensure you are using the same WiFi with your mobile and computer
 - source ./start.sh
 - npm i in every folder that has a package.json
 - npx expo start --clear --tunnel
+adb shell pm reset-permissions

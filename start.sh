@@ -52,6 +52,10 @@ if [ ! -f "$ANDROID_HOME/platform-tools/adb" ]; then
 fi
 export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
+# ********* ask for GPS *********
+# Any permission the user previously granted goes back to un-granted.
+adb shell pm reset-permissions
+
 # ********* npm cache *********
 npm config set cache "$HOME/sgoinfre/.npm-cache"
 

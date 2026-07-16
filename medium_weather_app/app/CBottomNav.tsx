@@ -135,7 +135,7 @@ const WeeklyRoute = ({ location, weekly }: WeeklyRouteProps) => (
                 })}
               </Text>
               <Text>{w.temperature_2m_min?.toFixed(1)}°C</Text>
-              <Text>{w.temperature_2m_max?.toFixed(1)}km/h</Text>
+              <Text>{w.temperature_2m_max?.toFixed(1)}°C</Text>
               <Text>{truncate(getWeatherCode(w.weather_code), 5)}</Text>
             </View>
           );
