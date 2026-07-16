@@ -36,8 +36,17 @@ export interface WeatherData {
 // Sans elle, tu ne peux pas accéder au GPS depuis React Native.
 // C'est elle qui gère aussi les permissions (requestForegroundPermissionsAsync).
 
+// Actually requests permission — this is the ONLY function that should
+// trigger the native OS dialog. Call it once per app flow.
 const requestPermission = async (): Promise<boolean> => {
   const { status } = await Location.requestForegroundPermissionsAsync();
+  return status === "granted";
+};
+
+// Checks the current permission status WITHOUT prompting the user.
+// Use this everywhere else instead of requestPermission().
+const hasPermission = async (): Promise<boolean> => {
+  const { status } = await Location.getForegroundPermissionsAsync();
   return status === "granted";
 };
 
@@ -66,9 +75,11 @@ const promptEnableGPS = (): void => {
     ],
   );
 };
-// Get current location
+
+// Get current location. Assumes permission has ALREADY been granted
+// (checked/requested once upstream) — does not prompt itself.
 const getLocation = async (): Promise<Coords | null> => {
-  const granted = await requestPermission();
+  const granted = await hasPermission();
   if (!granted) return null;
 
   const gpsOn = await checkGPSEnabled();
@@ -80,18 +91,19 @@ const getLocation = async (): Promise<Coords | null> => {
   const { coords } = await Location.getCurrentPositionAsync({
     accuracy: Location.Accuracy.High,
   });
-
   return {
     latitude: coords.latitude,
     longitude: coords.longitude,
   };
 };
 
-// Track location changes
+// Track location changes. Assumes permission has ALREADY been granted —
+// only checks, never prompts, so it can safely be called after getLocation()
+// in the same init flow without a second dialog.
 export const trackLocation = async (
   onChange: (coords: Coords) => void,
 ): Promise<Location.LocationSubscription | null> => {
-  const granted = await requestPermission();
+  const granted = await hasPermission();
   if (!granted) return null;
 
   return await Location.watchPositionAsync(
@@ -152,6 +164,7 @@ export const useLocation = (externalCoords?: {
   });
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
+
   const activeCoords = externalCoords ?? coords;
 
   // Fetch ensemble weather when coords change
@@ -179,12 +192,20 @@ export const useLocation = (externalCoords?: {
     };
     fetchForecasts();
   }, [activeCoords.latitude, activeCoords.longitude]);
+
   // Get location on mount and track changes
   useEffect(() => {
     let subscriber: Location.LocationSubscription | null = null;
 
     const init = async () => {
-      const initialCoords = await getLocation();
+      // Single point where the native permission dialog can appear.
+      const granted = await requestPermission();
+      if (!granted) {
+        setLoading(false);
+        return;
+      }
+
+      const initialCoords = await getLocation(); // just checks now, no prompt
       const currentCoords = {
         latitude: initialCoords?.latitude,
         longitude: initialCoords?.longitude,
@@ -207,6 +228,7 @@ export const useLocation = (externalCoords?: {
     // cleanup function of the useEffect — React calls it automatically when component is unmounted.
     return () => subscriber?.remove();
   }, []);
+
   // console.log(weatherData);
   return { address, coords: activeCoords, weatherData, loading };
 };
