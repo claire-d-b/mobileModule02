@@ -54,7 +54,7 @@ export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
 
 # ********* ask for GPS *********
 # Any permission the user previously granted goes back to un-granted.
-adb shell pm reset-permissionss
+adb shell pm reset-permissions
 
 # ********* npm cache *********
 npm config set cache "$HOME/sgoinfre/.npm-cache"
