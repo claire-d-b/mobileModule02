@@ -88,6 +88,7 @@ const TodayRoute = ({ location, todayHourly }: TodayRouteProps) => (
                 {h.time.toLocaleTimeString("fr-FR", {
                   hour: "2-digit",
                   minute: "2-digit",
+                  timeZone: "UTC",
                 })}
               </Text>
               <Text>{h.temperature_2m?.toFixed(1)}°C</Text>
@@ -132,6 +133,7 @@ const WeeklyRoute = ({ location, weekly }: WeeklyRouteProps) => (
                   weekday: "short",
                   day: "numeric",
                   month: "short",
+                  timeZone: "UTC",
                 })}
               </Text>
               <Text>{w.temperature_2m_min?.toFixed(1)}°C</Text>
