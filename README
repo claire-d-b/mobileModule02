@@ -1,0 +1,5 @@
+Ensure you are using the same WiFi with your mobile and computer
+# To install required Javascript execution environment, node package manager and launch the project with expo:
+- source ./start.sh
+- npm i in every folder that has a package.json
+- npx expo start --clear --tunnel
