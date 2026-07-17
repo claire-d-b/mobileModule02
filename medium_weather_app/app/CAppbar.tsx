@@ -24,6 +24,8 @@ export default function CAppbar() {
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
 
+  const [tabIndex, setTabIndex] = React.useState(0);
+
   const [selectedCoords, setSelectedCoords] = useState<Coordinates | undefined>(
     undefined,
   );
@@ -170,11 +172,8 @@ export default function CAppbar() {
             message={errorMessage}
             location={location}
             weatherData={weatherData}
-            // style={{
-            //   // height: "100%",
-            //   flex: 1,
-            //   paddingBottom: isLandscape ? 100 : 60,
-            // }}
+            index={tabIndex}
+            onIndexChange={setTabIndex}
           />
         )}
       </View>
