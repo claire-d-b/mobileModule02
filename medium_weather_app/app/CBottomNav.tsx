@@ -11,27 +11,32 @@ interface RouteProps {
   data: WeatherData | null;
 }
 
-const CurrRoute = ({ location, data }: RouteProps) => (
-  <View
-    style={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      gap: 20,
-    }}
-  >
-    <Text>Currently</Text>
-    <View style={{ padding: 20, width: "100%" }}>
-      <Text>{location}</Text>
-      <Text>{getWeatherCode(data?.current?.weather_code)}</Text>
-      <Text>{data?.current.temperature_2m.toFixed(1)}°C</Text>
-      <Text>{data?.current.wind_speed_10m.toFixed(1)}km/h</Text>
+const CurrRoute = ({ location, data }: RouteProps) =>
+  (location && data && (
+    <View
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 20,
+      }}
+    >
+      <Text>Currently</Text>
+      <View style={{ padding: 20, width: "100%" }}>
+        <Text>{location}</Text>
+        <Text>{getWeatherCode(data?.current?.weather_code)}</Text>
+        <Text>{data?.current.temperature_2m.toFixed(1)}°C</Text>
+        <Text>{data?.current.wind_speed_10m.toFixed(1)}km/h</Text>
+      </View>
     </View>
-  </View>
-);
+  )) || (
+    <Text style={{ textAlign: "center", paddingTop: 20 }}>
+      Geolocation is not available.
+    </Text>
+  );
 
 interface TodayRouteProps {
   location: string;
@@ -57,94 +62,104 @@ interface WeeklyRouteProps {
 const truncate = (str: string, maxLength: number = 5) =>
   str.length > maxLength ? str.slice(0, maxLength) + "…" : str;
 
-const TodayRoute = ({ location, todayHourly }: TodayRouteProps) => (
-  <View
-    style={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      gap: 20,
-    }}
-  >
-    <Text>Today</Text>
-    <ScrollView style={{ padding: 20, width: "100%" }}>
-      <Text>{location}</Text>
-      {!!todayHourly?.length &&
-        todayHourly.map((h, i) => {
-          return (
-            <View
-              key={`hourly_${i}`}
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text>
-                {h.time.toLocaleTimeString("fr-FR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  timeZone: "UTC",
-                })}
-              </Text>
-              <Text>{h.temperature_2m?.toFixed(1)}°C</Text>
-              <Text>{h.wind_speed_10m?.toFixed(1)}km/h</Text>
-              <Text>{truncate(getWeatherCode(h.weather_code), 5)}</Text>
-            </View>
-          );
-        })}
-    </ScrollView>
-  </View>
-);
+const TodayRoute = ({ location, todayHourly }: TodayRouteProps) =>
+  (location && todayHourly && todayHourly.length > 0 && (
+    <View
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 20,
+      }}
+    >
+      <Text>Today</Text>
+      <ScrollView style={{ padding: 20, width: "100%" }}>
+        <Text>{location}</Text>
+        {!!todayHourly?.length &&
+          todayHourly.map((h, i) => {
+            return (
+              <View
+                key={`hourly_${i}`}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text>
+                  {h.time.toLocaleTimeString("fr-FR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "UTC",
+                  })}
+                </Text>
+                <Text>{h.temperature_2m?.toFixed(1)}°C</Text>
+                <Text>{h.wind_speed_10m?.toFixed(1)}km/h</Text>
+                <Text>{truncate(getWeatherCode(h.weather_code), 5)}</Text>
+              </View>
+            );
+          })}
+      </ScrollView>
+    </View>
+  )) || (
+    <Text style={{ textAlign: "center", paddingTop: 20 }}>
+      Geolocation is not available.
+    </Text>
+  );
 
-const WeeklyRoute = ({ location, weekly }: WeeklyRouteProps) => (
-  <View
-    style={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      gap: 20,
-    }}
-  >
-    <Text>Weekly</Text>
-    <ScrollView style={{ padding: 20, width: "100%" }}>
-      <Text>{location}</Text>
-      {!!weekly?.length &&
-        weekly.map((w, i) => {
-          return (
-            <View
-              key={`weekly_${i}`}
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text>
-                {w.time.toLocaleDateString("fr-FR", {
-                  weekday: "short",
-                  day: "numeric",
-                  month: "short",
-                  timeZone: "UTC",
-                })}
-              </Text>
-              <Text>{w.temperature_2m_min?.toFixed(1)}°C</Text>
-              <Text>{w.temperature_2m_max?.toFixed(1)}°C</Text>
-              <Text>{truncate(getWeatherCode(w.weather_code), 5)}</Text>
-            </View>
-          );
-        })}
-    </ScrollView>
-  </View>
-);
+const WeeklyRoute = ({ location, weekly }: WeeklyRouteProps) =>
+  (location && weekly && weekly.length > 0 && (
+    <View
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 20,
+      }}
+    >
+      <Text>Weekly</Text>
+      <ScrollView style={{ padding: 20, width: "100%" }}>
+        <Text>{location}</Text>
+        {!!weekly?.length &&
+          weekly.map((w, i) => {
+            return (
+              <View
+                key={`weekly_${i}`}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text>
+                  {w.time.toLocaleDateString("fr-FR", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                    timeZone: "UTC",
+                  })}
+                </Text>
+                <Text>{w.temperature_2m_min?.toFixed(1)}°C</Text>
+                <Text>{w.temperature_2m_max?.toFixed(1)}°C</Text>
+                <Text>{truncate(getWeatherCode(w.weather_code), 5)}</Text>
+              </View>
+            );
+          })}
+      </ScrollView>
+    </View>
+  )) || (
+    <Text style={{ textAlign: "center", paddingTop: 20 }}>
+      Geolocation is not available.
+    </Text>
+  );
 
 interface Props {
   message: string;
