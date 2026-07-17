@@ -1,9 +1,12 @@
 import React from "react";
+import { ReturnKeyTypeOptions } from "react-native";
 import { TextInput } from "react-native-paper";
 
 interface Props {
-  onBlur: (args: any) => void;
+  onBlur?: (args: any) => void;
   onChangeText: (text: string) => void;
+  onSubmitEditing?: () => void;
+  returnKeyType?: ReturnKeyTypeOptions | undefined;
   label: string;
   msg: string;
   placeholder: string;
@@ -21,6 +24,8 @@ interface Props {
 const _ = ({
   onBlur,
   onChangeText,
+  onSubmitEditing,
+  returnKeyType,
   label,
   msg,
   placeholder,
@@ -38,6 +43,8 @@ const _ = ({
     <TextInput
       onBlur={onBlur}
       onChangeText={onChangeText}
+      onSubmitEditing={onSubmitEditing}
+      returnKeyType={returnKeyType}
       label={label}
       value={msg}
       placeholder={placeholder}

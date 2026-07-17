@@ -41,6 +41,20 @@ export default function CAppbar() {
   const [visible, setVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const handleSearchSubmit = () => {
+    if (placesList.length > 0) {
+      const p = placesList[0];
+      setLocation(`${p.name}, ${p.admin1}, ${p.country}`);
+      setSelectedCoords({ latitude: p.latitude, longitude: p.longitude });
+      setErrorMessage("");
+    } else {
+      setLocation("");
+      setSelectedCoords(undefined);
+      setErrorMessage("Location not found.");
+    }
+    setVisible(false);
+  };
+
   useEffect(() => {
     if (detectedAddress && location === "") {
       setLocation(detectedAddress);
@@ -88,18 +102,19 @@ export default function CAppbar() {
         >
           <Icon source="magnify" color="white" size={20} />
           <CTextInput
-            onBlur={(e: any) => {
-              // setLocation(address);
-              if (!selectedCoords) {
-                setLocation("");
-                setErrorMessage("Location not found.");
-              }
-            }}
+            // onBlur={(e: any) => {
+            //   if (!selectedCoords) {
+            //     setLocation("");
+            //     setErrorMessage("Location not found.");
+            //   }
+            // }}
             onChangeText={(text: string) => {
               setAddress(text);
               setVisible(true);
               setErrorMessage("");
             }}
+            onSubmitEditing={handleSearchSubmit}
+            returnKeyType="search"
             textColor="white"
             label="Location"
             msg={address}
