@@ -1,8 +1,7 @@
-// @ts-nocheck
-// Cela supprime toutes les erreurs TypeScript sans rien casser à l'exécution. C'est un contournement acceptable tant que react-native-paper n'a pas de fix officiel pour RN 0.81.
 import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
 import { View, ScrollView } from "react-native";
+import { WeatherData } from "../hooks/useLocation";
 import getWeatherCode from "../functions/weatherCodes";
 import PagerView from "react-native-pager-view";
 
@@ -28,8 +27,8 @@ const CurrRoute = ({ location, data }: RouteProps) =>
       <View style={{ padding: 20, width: "100%" }}>
         <Text>{location}</Text>
         <Text>{getWeatherCode(data?.current?.weather_code)}</Text>
-        <Text>{data?.current.temperature_2m.toFixed(1)}°C</Text>
-        <Text>{data?.current.wind_speed_10m.toFixed(1)}km/h</Text>
+        <Text>{data?.current?.temperature_2m?.toFixed(1)}°C</Text>
+        <Text>{data?.current?.wind_speed_10m?.toFixed(1)}km/h</Text>
       </View>
     </View>
   )) || (
@@ -203,9 +202,17 @@ const CBottomNav = ({
     },
   ]);
 
+  const jumpTo = (key: string) => {
+    const newIndex = routes.findIndex((r) => r.key === key);
+    if (newIndex !== -1) {
+      pagerRef.current?.setPageWithoutAnimation(newIndex);
+      onIndexChange(newIndex);
+    }
+  };
+
   const todayHourly =
-    weatherData?.hourly.time
-      .map((time, i) => ({
+    weatherData?.hourly?.time
+      ?.map((time, i) => ({
         time,
         temperature_2m: weatherData.hourly.temperature_2m?.[i],
         weather_code: weatherData.hourly.weather_code?.[i],
@@ -288,6 +295,8 @@ const CBottomNav = ({
   });
 
   React.useEffect(() => {
+    // submittingRef.current contient la valeur (ici false au départ).
+    // On peut la lire ou la modifier à tout moment (submittingRef.current = true) — ça ne redéclenche jamais un re-render du composant, contrairement à setState.
     pagerRef.current?.setPageWithoutAnimation(index);
   }, [index]);
 
@@ -301,7 +310,7 @@ const CBottomNav = ({
       >
         {routes.map((route) => (
           <View key={route.key} style={{ flex: 1 }}>
-            {renderScene({ route })}
+            {renderScene({ route, jumpTo })}
           </View>
         ))}
       </PagerView>

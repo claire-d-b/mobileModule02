@@ -1,5 +1,3 @@
-// @ts-nocheck
-// Cela supprime toutes les erreurs TypeScript sans rien casser à l'exécution. C'est un contournement acceptable tant que react-native-paper n'a pas de fix officiel pour RN 0.81.
 import React, { useState, useEffect } from "react";
 import { View, useWindowDimensions, ScrollView } from "react-native";
 import { Appbar, Text, IconButton, Icon, Menu } from "react-native-paper";
