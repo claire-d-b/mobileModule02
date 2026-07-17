@@ -32,6 +32,7 @@ export default function CAppbar() {
     coords,
     weatherData,
     loading,
+    error: weatherError,
   } = useLocation(selectedCoords);
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState("");
@@ -182,7 +183,7 @@ export default function CAppbar() {
         )}
         {!visible && (
           <CBottomNav
-            message={errorMessage}
+            message={errorMessage || weatherError}
             location={location}
             weatherData={weatherData}
             index={tabIndex}

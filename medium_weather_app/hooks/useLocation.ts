@@ -165,6 +165,8 @@ export const useLocation = (externalCoords?: {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState("");
+
   const activeCoords = externalCoords ?? coords;
 
   // Fetch ensemble weather when coords change
@@ -176,19 +178,25 @@ export const useLocation = (externalCoords?: {
       )
         return;
       // params to send to openmeteo - defines which values will be returned
-      const response = await getForecasts({
-        latitude: activeCoords.latitude,
-        longitude: activeCoords.longitude,
-        daily: [
-          "weather_code",
-          "temperature_2m_max",
-          "temperature_2m_min",
-          "wind_speed_10m_max",
-        ],
-        hourly: ["temperature_2m", "weather_code", "wind_speed_10m"],
-        current: ["temperature_2m", "weather_code", "wind_speed_10m"],
-      });
-      setWeatherData(response);
+      try {
+        const response = await getForecasts({
+          latitude: activeCoords.latitude,
+          longitude: activeCoords.longitude,
+          daily: [
+            "weather_code",
+            "temperature_2m_max",
+            "temperature_2m_min",
+            "wind_speed_10m_max",
+          ],
+          hourly: ["temperature_2m", "weather_code", "wind_speed_10m"],
+          current: ["temperature_2m", "weather_code", "wind_speed_10m"],
+        });
+        setWeatherData(response);
+        setError("");
+      } catch {
+        setWeatherData(null);
+        setError("Unable to fetch weather data.");
+      }
     };
     fetchForecasts();
   }, [activeCoords.latitude, activeCoords.longitude]);
@@ -230,5 +238,5 @@ export const useLocation = (externalCoords?: {
   }, []);
 
   // console.log(weatherData);
-  return { address, coords: activeCoords, weatherData, loading };
+  return { address, coords: activeCoords, weatherData, loading, error };
 };

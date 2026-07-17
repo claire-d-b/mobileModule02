@@ -10,10 +10,18 @@ interface EnsembleParams {
 
 export const getForecasts = async ({ ...params }: EnsembleParams) => {
   const url = "https://api.open-meteo.com/v1/forecast";
-  const responses = await fetchWeatherApi(url, params);
 
-  // Process first location. Add a for-loop for multiple locations or weather models
-  const response = responses[0];
+  let responses;
+  try {
+    responses = await fetchWeatherApi(url, params);
+  } catch (error) {
+    throw new Error("Unable to fetch weather data. Please try again.");
+  }
+
+  const response = responses?.[0];
+  if (!response) {
+    throw new Error("No weather data available for this location.");
+  }
 
   // utcOffsetSeconds() is a method returned by the open-meteo API which gives the time difference in secondes between UTC and the local time zone from the city.
   const utcOffsetSeconds = response.utcOffsetSeconds();

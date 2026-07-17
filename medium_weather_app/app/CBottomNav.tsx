@@ -166,7 +166,7 @@ interface Props {
   weatherData: WeatherData | null;
   index: number;
   onIndexChange: (i: number) => void;
-  style: {};
+  style?: {};
 }
 
 const CBottomNav = ({
