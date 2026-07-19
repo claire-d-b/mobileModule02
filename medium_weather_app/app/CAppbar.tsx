@@ -154,7 +154,7 @@ export default function CAppbar() {
         }}
       >
         {visible && !!placesList.length && (
-          <ScrollView style={{ flex: 1 }}>
+          <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
             {placesList.map((p, i) => (
               <View key={`place_${i}`}>
                 <Menu.Item

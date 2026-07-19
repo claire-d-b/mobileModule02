@@ -3,6 +3,7 @@ import * as IntentLauncher from "expo-intent-launcher";
 import { useState, useEffect } from "react";
 import { Platform, Alert } from "react-native";
 import { getForecasts } from "../functions/forecasts";
+import NetInfo from "@react-native-community/netinfo";
 
 interface Coords {
   latitude: number | undefined;
@@ -177,7 +178,14 @@ export const useLocation = (externalCoords?: {
         activeCoords.longitude === undefined
       )
         return;
-      // params to send to openmeteo - defines which values will be returned
+
+      const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+        setError("Internet connexion lost.");
+        setWeatherData(null);
+        return;
+      }
+
       try {
         const response = await getForecasts({
           latitude: activeCoords.latitude,
@@ -235,6 +243,20 @@ export const useLocation = (externalCoords?: {
     init();
     // cleanup function of the useEffect — React calls it automatically when component is unmounted.
     return () => subscriber?.remove();
+  }, []);
+
+  // Track network connectivity and surface a message when offline
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      if (!state.isConnected) {
+        setError("Internet connexion lost.");
+      } else {
+        // clear only the connectivity message, don't stomp other errors
+        setError((prev) => (prev === "Internet connexion lost." ? "" : prev));
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   // console.log(weatherData);
