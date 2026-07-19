@@ -143,15 +143,10 @@ export const getLocationName = async (
 
 export const getPlacesList = async (location: string) => {
   if (!location) return [];
-  try {
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=10&language=en&format=json`;
-    const response = await fetch(url);
-    const data = await response.json();
-    return data.results ?? [];
-  } catch (e) {
-    console.error("Places fetch failed:", e);
-    return [];
-  }
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=10&language=en&format=json`;
+  const response = await fetch(url);
+  const data = await response.json();
+  return data.results ?? [];
 };
 
 export const useLocation = (externalCoords?: {
