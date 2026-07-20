@@ -12,16 +12,10 @@ export const getForecasts = async ({ ...params }: EnsembleParams) => {
   const url = "https://api.open-meteo.com/v1/forecast";
 
   let responses;
-  try {
-    responses = await fetchWeatherApi(url, params);
-  } catch (error) {
-    throw new Error("Unable to fetch weather data. Please try again.");
-  }
+  responses = await fetchWeatherApi(url, params);
 
   const response = responses?.[0];
-  if (!response) {
-    throw new Error("No weather data available for this location.");
-  }
+  if (!response) return null;
 
   // utcOffsetSeconds() is a method returned by the open-meteo API which gives the time difference in secondes between UTC and the local time zone from the city.
   const utcOffsetSeconds = response.utcOffsetSeconds();
