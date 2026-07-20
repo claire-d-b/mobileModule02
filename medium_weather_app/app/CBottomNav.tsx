@@ -169,7 +169,7 @@ interface Props {
   style?: {};
 }
 
-const CBottomNav = ({
+const _ = ({
   message,
   location,
   weatherData,
@@ -330,4 +330,4 @@ const CBottomNav = ({
   );
 };
 
-export default CBottomNav;
+export default _;
