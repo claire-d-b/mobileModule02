@@ -294,9 +294,14 @@ const _ = ({
       ),
   });
 
+  const isInternalChange = React.useRef(false);
+
   React.useEffect(() => {
-    // submittingRef.current contient la valeur (ici false au départ).
-    // On peut la lire ou la modifier à tout moment (submittingRef.current = true) — ça ne redéclenche jamais un re-render du composant, contrairement à setState.
+    if (isInternalChange.current) {
+      // Ce changement vient du swipe (onPageSelected) : le pager est déjà à la bonne page.
+      isInternalChange.current = false;
+      return;
+    }
     pagerRef.current?.setPageWithoutAnimation(index);
   }, [index]);
 
@@ -306,7 +311,10 @@ const _ = ({
         ref={pagerRef}
         style={{ flex: 1 }}
         initialPage={index}
-        onPageSelected={(e) => onIndexChange(e.nativeEvent.position)}
+        onPageSelected={(e) => {
+          isInternalChange.current = true;
+          onIndexChange(e.nativeEvent.position);
+        }}
       >
         {routes.map((route) => (
           <View key={route.key} style={{ flex: 1 }}>
@@ -318,7 +326,7 @@ const _ = ({
         navigationState={{ index, routes }}
         onTabPress={({ route }) => {
           const newIndex = routes.findIndex((r) => r.key === route.key);
-          pagerRef.current?.setPageWithoutAnimation(newIndex);
+          // pagerRef.current?.setPageWithoutAnimation(newIndex);
           onIndexChange(newIndex);
         }}
         activeColor="white"
